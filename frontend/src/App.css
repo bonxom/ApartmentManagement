@@ -1,0 +1,17 @@
+.vim-page {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.vim-section-card {
+  background: #ffffff;
+  border: 1px solid #dbe4f1;
+  border-radius: 16px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.vim-glass-topbar {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}

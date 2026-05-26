@@ -1,0 +1,116 @@
+.pricing-section {
+  padding: 100px 0;
+  background-color: #ffffff;
+}
+
+.pricing-card {
+  height: 100%;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid #e0e0e0;
+}
+
+.pricing-card.popular {
+  border: 2px solid #2e7d32;
+  transform: scale(1.05);
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.pricing-card.popular:hover {
+  transform: scale(1.05) translateY(-8px);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 600;
+  z-index: 1;
+}
+
+.pricing-card-content {
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+}
+
+.plan-name {
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.price-box {
+  margin-bottom: 1rem;
+}
+
+.plan-price {
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.price-period {
+  color: #666;
+}
+
+.plan-description {
+  color: #666;
+  margin-bottom: 2rem;
+  min-height: 40px;
+  line-height: 1.6;
+}
+
+.features-list {
+  text-align: left;
+  margin-bottom: 2rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.feature-item:last-child {
+  margin-bottom: 0;
+}
+
+.check-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.feature-text {
+  color: #555;
+  line-height: 1.6;
+}
+
+.pricing-button {
+  text-transform: none;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-width: 2px;
+}
+
+@media (max-width: 900px) {
+  .pricing-section {
+    padding: 60px 0;
+  }
+  
+  .pricing-card.popular {
+    transform: scale(1);
+  }
+  
+  .pricing-card.popular:hover {
+    transform: translateY(-8px);
+  }
+}

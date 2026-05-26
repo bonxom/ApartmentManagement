@@ -116,6 +116,12 @@ Frontend mặc định chạy tại `http://localhost:5173`.
 - `HOUSE MEMBER`: cư dân thuộc hộ, theo dõi phí và gửi yêu cầu
 - `MEMBER`: tài khoản cư dân chưa được gắn vào hộ
 
+## Tài khoản mẫu
+
+- Admin (`HAMLET LEADER`)
+  - Email: `admin@res.com`
+  - Password: `123456`
+
 ## Triển khai
 
 Bạn có thể triển khai:

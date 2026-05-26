@@ -1,0 +1,232 @@
+
+.hero-section {
+  padding: 50px 0 80px;
+  min-height: 90vh;
+  display: flex;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 40%, #dbeafe 100%);
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated Background Decorations */
+.hero-section::before,
+.hero-section::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: pulse-soft 6s ease-in-out infinite;
+  z-index: 0;
+} 
+
+.hero-section::before {
+  top: 5rem;
+  left: 2.5rem;
+  width: 20rem;
+  height: 20rem;
+  background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0.3) 70%, transparent 100%);
+}
+
+.hero-section::after {
+  top: 10rem;
+  right: 5rem;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(circle, #60a5fa 0%, rgba(96, 165, 250, 0.3) 70%, transparent 100%);
+  animation-delay: 1.5s;
+}
+
+.hero-content {
+  padding: 2rem 0;
+}
+
+/* .hero-badge {
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: rgba(25, 118, 210, 0.1);
+  border-radius: 20px;
+} */
+
+/* .hero-title {
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  font-size: 3.5rem;
+} */
+
+.hero-title {
+  color: #111827;            /* gần giống text-gray-900 */
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 3.5rem;
+}
+
+/* Bao ngoài để position cho underline */
+.highlight-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Text gradient trắng – xanh dương */
+.highlight-text {
+  background-image: linear-gradient(to right, #1d4ed8, #3b82f6, #38bdf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  letter-spacing: 0.02em; 
+  animation: pulse-soft 3s ease-in-out infinite; /* nếu bạn dùng hiệu ứng */
+}
+
+
+/* SVG underline nằm ngay dưới chữ */
+.highlight-underline {
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Optional: hiệu ứng pulse nhẹ cho text (nếu muốn) */
+@keyframes pulse-soft {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.highlight-text {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+
+@media (max-width: 900px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+.hero-description {
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 2.5rem;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.primary-cta-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: none;
+}
+
+.primary-cta-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
+}
+
+.secondary-cta-button {
+  text-transform: none;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-width: 2px;
+  border-radius: 12px;
+  color: #3b82f6;
+  border-color: #3b82f6;
+  background-color: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.secondary-cta-button:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.hero-trust-badges {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.trust-text {
+  color: #666;
+  font-weight: 500;
+}
+
+.hero-image {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.2), 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 70px rgba(59, 130, 246, 0.25), 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 100px 0 60px;
+    min-height: auto;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+  }
+  
+  .primary-cta-button,
+  .secondary-cta-button {
+    width: 100%;
+  }
+}

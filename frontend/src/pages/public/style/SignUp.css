@@ -1,0 +1,212 @@
+/* SignUp Page Styles */
+
+/* Home Button */
+.signup-home-btn {
+  position: fixed !important;
+  top: 24px;
+  left: 24px;
+  z-index: 100;
+  background-color: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  width: 48px;
+  height: 48px;
+  transition: all 0.3s ease !important;
+}
+
+.signup-home-btn:hover {
+  background-color: #f0f9ff !important;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+.signup-home-btn svg {
+  color: #06325a;
+}
+
+/* Page Container */
+.signup-page {
+  min-height: 100vh;
+  background: url('/src/assets/1961.jpg') no-repeat center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Overlay with Blur */
+.signup-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(245, 247, 250, 0.85) 0%, rgba(195, 207, 226, 0.85) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1;
+  opacity: 0.9;
+}
+
+/* Background Decoration */
+.signup-background {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.signup-bg-blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+}
+
+.signup-bg-blur-1 {
+  top: -25%;
+  right: -25%;
+  width: 50%;
+  height: 50%;
+  background: #2535ac;
+  opacity: 0.3;
+}
+
+.signup-bg-blur-2 {
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  height: 40%;
+  background: #3b82f6;
+  opacity: 0.2;
+}
+
+/* Main Card Container */
+.signup-card-container {
+  position: relative;
+  background-color: white;
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Form Content */
+.signup-form-content {
+  padding: 48px;
+}
+
+@media (max-width: 767px) {
+  .signup-form-content {
+    padding: 32px;
+  }
+}
+
+/* Header */
+.signup-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.signup-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #0e4171 0%, #3498db 100%);
+  color: white;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(36, 98, 173, 0.3);
+}
+
+.signup-title {
+  font-weight: bold;
+  color: #06325a;
+  margin-bottom: 8px;
+}
+
+.signup-subtitle {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* Form */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.signup-input .MuiOutlinedInput-root {
+  background-color: #f9fafb;
+  border-radius: 12px;
+}
+
+/* Select Field Styling */
+.signup-input select {
+  padding: 16.5px 14px;
+  font-size: 16px;
+  color: #1f2937;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.signup-input select option {
+  padding: 12px;
+  background-color: white;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.signup-input select option:disabled {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.signup-input select option:hover {
+  background-color: #f3f4f6;
+}
+
+.signup-input select:focus option:checked {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* Submit Button */
+.signup-submit-btn {
+  margin-top: 8px !important;
+  border-radius: 12px !important;
+  padding: 12px 0 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(41, 76, 190, 0.353) !important;
+  background: linear-gradient(135deg, #085cab 0%, #3498db 100%) !important;
+}
+
+.signup-submit-btn:hover {
+  background: linear-gradient(135deg, #143553 0%, #1269a3 100%) !important;
+  box-shadow: 0 6px 16px rgba(152, 98, 219, 0.4) !important;
+}
+
+/* Footer */
+.signup-footer {
+  text-align: center;
+  margin-top: 16px;
+  color: #6b7280;
+}
+
+.signup-signin-link {
+  color: #10b981;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-signin-link:hover {
+  text-decoration: underline;
+}

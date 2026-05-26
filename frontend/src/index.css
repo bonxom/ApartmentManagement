@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --vim-primary: #118ab2;
+  --vim-secondary: #2a9d8f;
+  --vim-ink: #0f172a;
+  --vim-muted: #64748b;
+  --vim-surface: #ffffff;
+  --vim-border: #dbe4f1;
+  --vim-bg: #f6f8fc;
+}
+
+body {
+  font-family: "Manrope", "Be Vietnam Pro", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--vim-bg);
+  color: var(--vim-ink);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eef2f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

@@ -1,0 +1,79 @@
+.landing-page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.landing-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 0;
+}
+
+.landing-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* General section spacing */
+.landing-page section {
+  position: relative;
+}
+
+/* Remove default margins from MUI components in landing page */
+.landing-page .MuiContainer-root {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (max-width: 600px) {
+  .landing-page .MuiContainer-root {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Utility classes for animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom scrollbar for webkit browsers */
+.landing-page ::-webkit-scrollbar {
+  width: 10px;
+}
+
+.landing-page ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.landing-page ::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.landing-page ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
