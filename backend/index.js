@@ -17,6 +17,7 @@ import feeRoutes from "./routes/feeRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import maintenanceRoutes from "./routes/maintenanceRoutes.js";
 
 const rawPort = process.env.PORT;
 const PORT = rawPort ? Number(rawPort) : 3000;
@@ -52,6 +53,7 @@ app.use("/api/fees", feeRoutes);
 app.use("/api/transactions", transactionRoutes)
 app.use("/api/stats", statsRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/maintenances", maintenanceRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

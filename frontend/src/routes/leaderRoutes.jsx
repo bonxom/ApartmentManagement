@@ -24,6 +24,9 @@ import LichSuGiaoDichTheoHoDan from '../pages/Admin/LichSu/LichSuGiaoDich';
 import XemChiTietGiaoDichHoDan from '../pages/Admin/LichSu/LichSuChiTiet/LichSuGiaoDichChiTiet';
 import LichSuThayDoiTheoHoDan from '../pages/Admin/LichSu/LichSuThayDoi';
 import ChiTietLichSuThayDoiHoDan from '../pages/Admin/LichSu/LichSuChiTiet/LichSuThayDoiChiTiet';
+import DanhSachPhanAnh from "../pages/Admin/PheDuyet/DanhSachPhanAnh";
+import DanhSachDangKyXe from "../pages/Admin/PheDuyet/DanhSachDangKyXe";
+import MaintenanceManagement from "../pages/Admin/BaoTri/MaintenanceManagement";
 
 // Routes cho Tổ trưởng (HAMLET LEADER)
 export const leaderRoutes = (
@@ -55,6 +58,9 @@ export const leaderRoutes = (
     <Route path="ThongTinChiTietMember" element={<ThongTinChiTietMember />} />
     <Route path="ThongTinNguoiTamTru" element={<ThongTinNguoiTamTru />} />
     <Route path="ThongTinNguoiTamVang" element={<ThongTinNguoiTamVang />} />
+    <Route path="feedback-list" element={<DanhSachPhanAnh />} />
+    <Route path="vehicle-list" element={<DanhSachDangKyXe />} />
+    <Route path="maintenance" element={<MaintenanceManagement />} />
     <Route path="*" element={<Navigate to="dashboard" replace />} />
     <Route path="setting" element={<Setting />} />
   </Route>

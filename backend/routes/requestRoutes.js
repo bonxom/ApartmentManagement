@@ -10,6 +10,8 @@ import {
   getMyHouseholdRequests,
   getMyHouseholdPaymentRequests,
   reviewRequest,
+  createFeedbackRequest,
+  createVehicleRegistrationRequest,
 } from "../controllers/requestController.js";
 // SỬA: Import đúng middleware authorizePermission
 import { protect, authorizePermission } from "../middleware/authMiddleware.js"; 
@@ -23,6 +25,8 @@ router.post("/temporary-residence", protect, createTemporaryResidenceRequest);
 router.post("/temporary-absence", protect, createTemporaryAbsenceRequest);
 router.post("/birth", protect, createBirthRequest);
 router.post("/death", protect, createDeathRequest);
+router.post("/feedback", protect, createFeedbackRequest); // Route mới cho phản ánh dịch vụ
+router.post("/vehicle", protect, createVehicleRegistrationRequest); // Route mới cho đăng ký gửi xe
 router.get("/my-household", protect, getMyHouseholdRequests);
 router.get("/my-household/payments", protect, getMyHouseholdPaymentRequests);
 // --- KHU VỰC DÀNH RIÊNG CHO TỔ TRƯỞNG ---

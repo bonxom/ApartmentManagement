@@ -243,6 +243,72 @@ export const createDeathRequest = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Gửi phản ánh dịch vụ (Cư dân gửi)
+// @route   POST /api/requests/feedback
+export const createFeedbackRequest = async (req, res) => {
+  try {
+    const { title, content, category, urgency } = req.body;
+    const user = req.user;
+
+    if (!title || !content || !category) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ tiêu đề, danh mục và nội dung phản ánh" });
+    }
+
+    if (!user.household) {
+      return res.status(400).json({ message: "Bạn chưa thuộc hộ khẩu nào để gửi phản ánh" });
+    }
+
+    const request = await Request.create({
+      requester: user._id,
+      type: "FEEDBACK",
+      requestData: {
+        householdId: user.household,
+        title,
+        content,
+        category,
+        urgency: urgency || "Thường"
+      }
+    });
+
+    res.status(201).json(request);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Gửi yêu cầu đăng ký xe (Cư dân gửi)
+// @route   POST /api/requests/vehicle
+export const createVehicleRegistrationRequest = async (req, res) => {
+  try {
+    const { vehicleType, licensePlate, brand, color } = req.body;
+    const user = req.user;
+
+    if (!vehicleType || !licensePlate || !brand || !color) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin đăng ký xe" });
+    }
+
+    if (!user.household) {
+      return res.status(400).json({ message: "Bạn chưa thuộc hộ khẩu nào để đăng ký gửi xe" });
+    }
+
+    const request = await Request.create({
+      requester: user._id,
+      type: "VEHICLE_REGISTRATION",
+      requestData: {
+        householdId: user.household,
+        vehicleType,
+        licensePlate,
+        brand,
+        color
+      }
+    });
+
+    res.status(201).json(request);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // @desc    Lấy danh sách yêu cầu (Dành cho Tổ trưởng)
 // @route   GET /api/requests
 export const getAllRequests = async (req, res) => {

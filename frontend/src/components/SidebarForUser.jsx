@@ -13,6 +13,9 @@ import {
   X,
   ClipboardList,
   MapPin,
+  MessageSquare,
+  Car,
+  Wrench,
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -131,6 +134,24 @@ export function SidebarForUser({ user, onWidthChange }) {
             icon={<MapPin size={18} />}
             label="Khai báo tạm trú tạm vắng"
             to="/member/requesttamtruvang"
+            isExpanded={isExpanded}
+          />
+          <MenuItem
+            icon={<MessageSquare size={18} />}
+            label="Gửi phản ánh dịch vụ"
+            to="/member/feedback"
+            isExpanded={isExpanded}
+          />
+          <MenuItem
+            icon={<Car size={18} />}
+            label="Đăng ký gửi xe"
+            to="/member/vehicle"
+            isExpanded={isExpanded}
+          />
+          <MenuItem
+            icon={<Wrench size={18} />}
+            label="Lịch bảo trì tòa nhà"
+            to="/member/maintenance"
             isExpanded={isExpanded}
           />
           {/* <MenuItem

@@ -10,6 +10,9 @@ import KhoanNop from "../pages/User/ThuPhi/khoannop.jsx";
 import RequestSinhTu from "../pages/User/Request/requestsinhtu";
 import RequestTamTruVang from "../pages/User/Request/requesttamtruvang";
 import YeuCauTamTruVang from "../pages/UserTemp";
+import RequestFeedback from "../pages/User/Request/requestfeedback";
+import RequestVehicle from "../pages/User/Request/requestvehicle";
+import UserMaintenanceView from "../pages/User/BaoTri/usemaintenance";
 import LichSuThayDoi from "../pages/User/LichSu/lichsuthaydoi_ofuser";
 import Setting from "../feature/Setting";
 import Lichsugiaodich from "../pages/User/LichSu/Lichsugiaodich_ofuser";
@@ -37,6 +40,9 @@ export const memberRoutes = (
       <Route path="requestsinhtu" element={<RequestSinhTu />} />
       <Route path="requesttamtruvang" element={<RequestTamTruVang />} />
       <Route path="yeucau/tamtruvang" element={<YeuCauTamTruVang />} />
+      <Route path="feedback" element={<RequestFeedback />} />
+      <Route path="vehicle" element={<RequestVehicle />} />
+      <Route path="maintenance" element={<UserMaintenanceView />} />
       <Route path="lichsuthaydoi" element={<LichSuThayDoi />} />
       <Route path="lichsugiaodich" element={<Lichsugiaodich />} />
       <Route path="lichsupheduyet" element={<Lichsupheduyet />} />
