@@ -17,7 +17,9 @@ const requestSchema = new mongoose.Schema(
         "TEMPORARY_RESIDENCE",  // Đăng ký tạm trú
         "TEMPORARY_ABSENT",     // Báo tạm vắng
         "BIRTH_REPORT",         // Khai sinh
-        "DEATH_REPORT"          // Khai tử
+        "DEATH_REPORT",          // Khai tử
+        "FEEDBACK",             // Phản ánh dịch vụ (NEW)
+        "VEHICLE_REGISTRATION"  // Đăng ký gửi xe (NEW)
       ], // Có thể mở rộng thêm sau này
       required: true,
     }, 

@@ -284,6 +284,36 @@ export const requestAPI = {
     const response = await api.post("/requests/death", payload);
     return response.data;
   },
+  // Phản ánh dịch vụ
+  createFeedback: async (payload) => {
+    const response = await api.post("/requests/feedback", payload);
+    return response.data;
+  },
+  // Đăng ký xe
+  createVehicleRegistration: async (payload) => {
+    const response = await api.post("/requests/vehicle", payload);
+    return response.data;
+  },
+};
+
+// ============= MAINTENANCE API =============
+export const maintenanceAPI = {
+  create: async (data) => {
+    const response = await api.post("/maintenances", data);
+    return response.data;
+  },
+  getAll: async (params = {}) => {
+    const response = await api.get("/maintenances", { params });
+    return response.data;
+  },
+  update: async (id, data) => {
+    const response = await api.put(`/maintenances/${id}`, data);
+    return response.data;
+  },
+  delete: async (id) => {
+    const response = await api.delete(`/maintenances/${id}`);
+    return response.data;
+  },
 };
 
 // ============= STATS API =============

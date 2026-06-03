@@ -11,6 +11,9 @@ import {
   Menu,
   X,
   Wallet,
+  Wrench,
+  MessageSquare,
+  Car,
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -163,6 +166,14 @@ export function Sidebar({ user, onWidthChange }) {
               label: "Danh sách tạm trú tạm vắng",
               path: `${rolePrefix}/tamtruvang`,
             },
+            {
+              label: "Danh sách phản ánh dịch vụ",
+              path: `${rolePrefix}/feedback-list`,
+            },
+            {
+              label: "Danh sách đăng ký gửi xe",
+              path: `${rolePrefix}/vehicle-list`,
+            },
           ]}
           onSubmenuClick={(path) => {
             navigate(path);
@@ -181,6 +192,12 @@ export function Sidebar({ user, onWidthChange }) {
         icon={<PlusCircle size={18} />}
         label="Thêm thông tin cư dân"
         to={`${rolePrefix}/themcudan`}
+        isExpanded={isExpanded}
+      />
+      <MenuItem
+        icon={<Wrench size={18} />}
+        label="Quản lý bảo trì"
+        to={`${rolePrefix}/maintenance`}
         isExpanded={isExpanded}
       />
 
