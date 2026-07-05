@@ -34,7 +34,7 @@ export function Sidebar({ user, onWidthChange }) {
       ? "/accountant"
       : "";
 
-  const appTitle = authUser?.name || user?.ten || "Tổ trưởng";
+  const appTitle = authUser?.name || user?.ten || "Ban quản lý";
   const [expandedMenu, setExpandedMenu] = useState(null);
   const [hideTimeout, setHideTimeout] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);

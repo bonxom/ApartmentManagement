@@ -110,8 +110,8 @@ export default function SimulationConsole() {
       steps: [
         "Cư dân gửi yêu cầu TEMPORARY_RESIDENCE trực tuyến qua ứng dụng...",
         "Trạng thái yêu cầu ban đầu được ghi nhận là PENDING...",
-        "Hệ thống thông báo tới tài khoản Tổ trưởng (HAMLET LEADER)...",
-        "Tổ trưởng kiểm tra hồ sơ và nhấn 'Phê duyệt'...",
+        "Hệ thống thông báo tới tài khoản Ban quản lý (HAMLET LEADER)...",
+        "Ban quản lý kiểm tra hồ sơ và nhấn 'Phê duyệt'...",
         "Cập nhật trạng thái yêu cầu sang APPROVED và gửi phản hồi thành công.",
       ],
       mockData: {
@@ -342,7 +342,7 @@ export default function SimulationConsole() {
                               Lý do: {sc.mockData.request.reason}
                             </Typography>
                             <Typography variant="body2" sx={{ color: "primary.main", mt: 1, fontStyle: "italic" }}>
-                              Phản hồi của Tổ trưởng: "{sc.mockData.request.comment}"
+                              Phản hồi của Ban quản lý: "{sc.mockData.request.comment}"
                             </Typography>
                           </Paper>
                         )}

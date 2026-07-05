@@ -22,7 +22,7 @@ function AdminPersonalInfo({ user }) {
     {
       icon: <Briefcase size={18} />,
       label: 'Vai trò',
-      value: 'Tổ trưởng',
+      value: 'Ban quản lý',
     },
   ];
 

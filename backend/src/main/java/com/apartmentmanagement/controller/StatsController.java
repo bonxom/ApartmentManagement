@@ -5,6 +5,8 @@ import com.apartmentmanagement.entity.Household;
 import com.apartmentmanagement.entity.Transaction;
 import com.apartmentmanagement.entity.User;
 import com.apartmentmanagement.enums.FeeStatus;
+import com.apartmentmanagement.enums.RequestStatus;
+import com.apartmentmanagement.enums.UserStatus;
 import com.apartmentmanagement.repository.FeeRepository;
 import com.apartmentmanagement.repository.HouseholdRepository;
 import com.apartmentmanagement.repository.RequestRepository;
@@ -13,6 +15,7 @@ import com.apartmentmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,10 +34,11 @@ public class StatsController {
     private final RequestRepository requestRepository;
 
     @GetMapping("/dashboard")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getDashboardStats() {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        long totalUsers = userRepository.countByStatus("VERIFIED");
+        long totalUsers = userRepository.countByStatus(UserStatus.VERIFIED);
         long totalHouseholds = householdRepository.count();
         long males = userRepository.countBySex("Nam");
         long females = userRepository.countBySex("Nữ");
@@ -70,7 +74,7 @@ public class StatsController {
             for (Fee fee : activeFees) {
                 if (fee.getType() == com.apartmentmanagement.enums.FeeType.MANDATORY) {
                     for (Household household : allHouseholds) {
-                        int memberCount = household.getMembers() != null ? household.getMembers().size() : 0;
+                        int memberCount = (int) userRepository.countByHouseholdId(household.getId());
                         totalRequired += fee.getUnitPrice() * 12 * memberCount;
                     }
                 }
@@ -108,6 +112,7 @@ public class StatsController {
     }
 
     @GetMapping("/user-dashboard")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getUserDashboardStats() {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -128,12 +133,12 @@ public class StatsController {
         householdInfo.put("leaderName", household.getLeader() != null ? household.getLeader().getName() : "N/A");
         response.put("household", householdInfo);
 
-        int memberCount = household.getMembers() != null ? household.getMembers().size() : 0;
+        int memberCount = (int) userRepository.countByHouseholdId(household.getId());
         response.put("members", memberCount);
 
         // Finance
         List<Fee> activeFees = feeRepository.findByStatus(FeeStatus.ACTIVE);
-        List<Transaction> paidTransactions = transactionRepository.findByHousehold(household.getId());
+        List<Transaction> paidTransactions = transactionRepository.findByHouseholdId(household.getId());
 
         double totalDue = 0;
         double totalPaid = 0;
@@ -195,7 +200,7 @@ public class StatsController {
         finance.put("total_unpaid", totalUnpaid);
         response.put("finance", finance);
 
-        long pendingRequests = requestRepository.countByRequesterAndStatus(currentUser.getId(), "PENDING");
+        long pendingRequests = requestRepository.countByRequesterIdAndStatus(currentUser.getId(), RequestStatus.PENDING);
         response.put("pending_requests", pendingRequests);
 
         Map<String, Double> paymentStats = new LinkedHashMap<>();

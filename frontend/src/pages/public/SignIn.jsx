@@ -64,7 +64,7 @@ function SignIn() {
         
         if (userRole === 'HAMLET LEADER' || userRole === 'ACCOUNTANT') {
           // Nếu là Leader/Accountant đăng nhập từ form Dân cư, chọn form cho họ
-          setErrors({ email: 'Vui lòng sử dụng form đăng nhập dành cho ' + (userRole === 'HAMLET LEADER' ? 'Tổ trưởng' : 'Kế toán') });
+          setErrors({ email: 'Vui lòng sử dụng form đăng nhập dành cho ' + (userRole === 'HAMLET LEADER' ? 'Ban quản lý' : 'Kế toán') });
           return;
         }
         
@@ -226,7 +226,7 @@ function SignIn() {
                 onClick={() => switchMode('leader')}
                 className="signin-overlay-btn signin-overlay-btn-primary"
               >
-                Tổ trưởng
+                Ban quản lý
               </Button>
               <Button 
                 onClick={() => switchMode('accountant')}

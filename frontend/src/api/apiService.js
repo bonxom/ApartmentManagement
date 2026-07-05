@@ -231,6 +231,12 @@ export const feeAPI = {
 
 // ============= REQUEST API =============
 export const requestAPI = {
+  // Chuẩn hóa các endpoint list để UI luôn nhận mảng
+  normalizeListResponse: (payload) => {
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.data)) return payload.data;
+    return [];
+  },
   // Cư dân gửi yêu cầu cập nhật thông tin
   updateInfo: async (newData) => {
     const response = await api.post("/requests/update-info", { newData });
@@ -254,19 +260,19 @@ export const requestAPI = {
   // Lấy danh sách yêu cầu
   getRequests: async (params = {}) => {
     const response = await api.get("/requests", { params });
-    return response.data;
+    return requestAPI.normalizeListResponse(response.data);
   },
   // Cư dân xem lịch sử yêu cầu nộp tiền của hộ mình
   getMyHouseholdPaymentRequests: async (params = {}) => {
     const response = await api.get("/requests/my-household/payments", { params });
-    return response.data;
+    return requestAPI.normalizeListResponse(response.data);
   },
   // Cư dân xem lịch sử yêu cầu của hộ mình
   getMyHouseholdRequests: async (params = {}) => {
     const response = await api.get("/requests/my-household", { params });
-    return response.data;
+    return requestAPI.normalizeListResponse(response.data);
   },
-  // Tổ trưởng duyệt/từ chối yêu cầu
+  // Ban quản lý duyệt/từ chối yêu cầu
   reviewRequest: async (id, status, leaderComment = "") => {
     const response = await api.put(`/requests/${id}/review`, {
       status,

@@ -147,10 +147,10 @@ public class UserService {
             if (household != null && household.getLeader() != null && household.getLeader().getId().equals(id)) {
                 throw new BusinessException("This user is the owner of a household. Remove the owner role first.");
             }
-            // Remove from household members
-            if (household != null && household.getMembers() != null) {
-                household.getMembers().removeIf(m -> m.getId().equals(id));
-                householdRepository.save(household);
+            // Remove user from household by clearing FK
+            if (household != null) {
+                user.setHousehold(null);
+                user.setRelationshipWithHead(null);
             }
         }
 
@@ -201,8 +201,9 @@ public class UserService {
             result.put("leader", leaderMap);
         }
 
-        if (household.getMembers() != null) {
-            result.put("members", household.getMembers().stream().map(m -> {
+        List<User> members = userRepository.findByHouseholdId(household.getId());
+        if (!members.isEmpty()) {
+            result.put("members", members.stream().map(m -> {
                 Map<String, Object> mMap = new java.util.LinkedHashMap<>();
                 mMap.put("_id", m.getId());
                 mMap.put("name", m.getName());

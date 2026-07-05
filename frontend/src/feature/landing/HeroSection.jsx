@@ -15,7 +15,6 @@ function HeroSection() {
               </Typography> */}
               
               <Typography variant="h2" className="hero-title" sx={{ mb: '1.5rem' }}>
-              <span className="hero-title">HỆ THỐNG QUẢN LÝ</span>{' '}
               <span className="highlight-wrapper">
                   <span className="highlight-text">
                   VIM SMARTCITY

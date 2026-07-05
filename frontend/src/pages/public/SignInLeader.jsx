@@ -68,7 +68,7 @@ function SignInLeader() {
     <Box>
       <Box className="signin-form-header">
         <Typography variant="h4" className="signin-title">
-          Đăng nhập Tổ trưởng
+          Đăng nhập Ban quản lý
         </Typography>
         <Typography className="signin-subtitle">
           Vui lòng nhập email và mật khẩu của bạn

@@ -6,7 +6,7 @@ function TestimonialsSection() {
   const testimonials = [
     {
       name: 'Lê Đức Chú',
-      role: 'Tổ trưởng dân phố, Hoa Thanh Quế',
+      role: 'Ban quản lý dân phố, Hoa Thanh Quế',
       avatar: 'user1.jpg',
       rating: 5,
       comment: 'Hệ thống giúp công việc quản lý dân cư của tôi dễ dàng hơn rất nhiều. Không còn phải lật giở hồ sơ giấy tờ như trước nữa. Mọi thông tin đều được lưu trữ và tìm kiếm nhanh chóng.'

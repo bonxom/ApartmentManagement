@@ -5,13 +5,10 @@ import com.apartmentmanagement.enums.*;
 import com.apartmentmanagement.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -28,7 +25,6 @@ public class SeedDataConfig implements CommandLineRunner {
     private final TransactionRepository transactionRepository;
     private final ResidentHistoryRepository residentHistoryRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MongoTemplate mongoTemplate;
 
     private static final Map<String, String> INIT_PERMISSIONS = new LinkedHashMap<>();
     static {
@@ -73,7 +69,7 @@ public class SeedDataConfig implements CommandLineRunner {
     @Override
     public void run(String... args) {
         try {
-            cleanIncompatibleData();
+            cleanExistingData();
             initPermissions();
             initRoles();
             initUsers();
@@ -86,27 +82,32 @@ public class SeedDataConfig implements CommandLineRunner {
         }
     }
 
-    /**
-     * Drops all collections that may have incompatible data from non-Spring apps.
-     * Existing data stored with plain ObjectIds instead of DBRefs causes
-     * "No converter found" errors. Clean slate ensures proper DBRef references.
-     */
-    private void cleanIncompatibleData() {
-        log.info("Cleaning existing data to ensure compatible DBRef format...");
-        try {
-            mongoTemplate.dropCollection("transactions");
-            mongoTemplate.dropCollection("fees");
-            mongoTemplate.dropCollection("households");
-            mongoTemplate.dropCollection("residenthistories");
-            mongoTemplate.dropCollection("users");
-            mongoTemplate.dropCollection("roles");
-            mongoTemplate.dropCollection("permissions");
-            log.info("All collections dropped. Re-seeding from scratch.");
-        } catch (Exception e) {
-            log.warn("Could not drop collections (may not exist yet): {}", e.getMessage());
-        }
+    @Transactional
+    private void cleanExistingData() {
+        log.info("Cleaning existing data for fresh seed...");
+        transactionRepository.deleteAll();
+        feeRepository.deleteAll();
+
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> {
+            user.setHousehold(null);
+            user.setRole(null);
+        });
+        userRepository.saveAll(users);
+
+        List<Household> households = householdRepository.findAll();
+        households.forEach(household -> household.setLeader(null));
+        householdRepository.saveAll(households);
+
+        residentHistoryRepository.deleteAll();
+        userRepository.deleteAll();
+        householdRepository.deleteAll();
+        roleRepository.deleteAll();
+        permissionRepository.deleteAll();
+        log.info("All existing data cleaned.");
     }
 
+    @Transactional
     private void initPermissions() {
         for (var entry : INIT_PERMISSIONS.entrySet()) {
             if (permissionRepository.findByPermission_name(entry.getKey()).isEmpty()) {
@@ -127,6 +128,7 @@ public class SeedDataConfig implements CommandLineRunner {
         return perms;
     }
 
+    @Transactional
     private void initRoles() {
         Map<String, List<String>> rolePerms = new LinkedHashMap<>();
         rolePerms.put("HAMLET LEADER", Arrays.asList(
@@ -151,11 +153,9 @@ public class SeedDataConfig implements CommandLineRunner {
         rolePerms.put("MEMBER", Arrays.asList("VIEW USER", "VIEW BASIC STATS"));
 
         for (var entry : rolePerms.entrySet()) {
-            // Try to find role — may fail if existing data has incompatible DBRef format
-            Optional<Role> existingRole = findRoleSafely(entry.getKey());
+            Optional<Role> existingRole = roleRepository.findByRole_name(entry.getKey());
 
             if (existingRole.isEmpty()) {
-                // Create new role
                 List<Permission> perms = getPermissions(entry.getValue());
                 roleRepository.save(Role.builder()
                         .role_name(entry.getKey())
@@ -163,7 +163,6 @@ public class SeedDataConfig implements CommandLineRunner {
                         .build());
                 log.debug("Created role: {}", entry.getKey());
             } else {
-                // Update permissions for existing role
                 Role role = existingRole.get();
                 role.setPermissions(getPermissions(entry.getValue()));
                 roleRepository.save(role);
@@ -171,27 +170,12 @@ public class SeedDataConfig implements CommandLineRunner {
         }
     }
 
-    /**
-     * Safely looks up a role by name. If the existing role has incompatible DBRef data
-     * (e.g., permissions stored as ObjectIds from a non-Spring app), it deletes the
-     * incompatible document and returns empty so it can be recreated.
-     */
-    private Optional<Role> findRoleSafely(String roleName) {
-        try {
-            return roleRepository.findByRole_name(roleName);
-        } catch (Exception e) {
-            log.warn("Incompatible role data for '{}', dropping and recreating: {}", roleName, e.getMessage());
-            // Delete the incompatible document using native query to avoid conversion
-            mongoTemplate.remove(Query.query(Criteria.where("role_name").is(roleName)), "roles");
-            return Optional.empty();
-        }
-    }
-
+    @Transactional
     private void initUsers() {
-        Role hamletRole = findRoleSafely("HAMLET LEADER").orElse(null);
-        Role accountantRole = findRoleSafely("ACCOUNTANT").orElse(null);
-        Role houseMemberRole = findRoleSafely("HOUSE MEMBER").orElse(null);
-        Role memberRole = findRoleSafely("MEMBER").orElse(null);
+        Role hamletRole = roleRepository.findByRole_name("HAMLET LEADER").orElse(null);
+        Role accountantRole = roleRepository.findByRole_name("ACCOUNTANT").orElse(null);
+        Role houseMemberRole = roleRepository.findByRole_name("HOUSE MEMBER").orElse(null);
+        Role memberRole = roleRepository.findByRole_name("MEMBER").orElse(null);
 
         // Admin
         createUserIfNotExists("admin@res.com", 1L, "123456", "Administrator",
@@ -227,16 +211,8 @@ public class SeedDataConfig implements CommandLineRunner {
 
     private void createUserIfNotExists(String email, Long userCardID, String password, String name,
                                         String sex, String dob, String birthLocation, Role role, UserStatus status) {
-        Optional<User> existing = findUserByEmailSafely(email);
-
-        if (existing.isPresent() && existing.get().getRole() != null) {
-            return; // User exists with valid role, skip
-        }
-
-        // Drop user if it exists but has no role (broken DBRef from old data)
-        if (existing.isPresent()) {
-            log.warn("User '{}' exists but has no role, recreating", email);
-            mongoTemplate.remove(Query.query(Criteria.where("email").is(email)), "users");
+        if (userRepository.findByEmail(email).isPresent()) {
+            return;
         }
 
         User user = User.builder()
@@ -253,16 +229,7 @@ public class SeedDataConfig implements CommandLineRunner {
         log.debug("Created user: {}", email);
     }
 
-    private Optional<User> findUserByEmailSafely(String email) {
-        try {
-            return userRepository.findByEmail(email);
-        } catch (Exception e) {
-            log.warn("Incompatible user data for '{}', dropping and recreating: {}", email, e.getMessage());
-            mongoTemplate.remove(Query.query(Criteria.where("email").is(email)), "users");
-            return Optional.empty();
-        }
-    }
-
+    @Transactional
     private void initHouseholds() {
         if (householdRepository.findByHouseHoldID("SEED-HH-001").isEmpty()) {
             User leader = userRepository.findByEmail("household.leader1@resident.test").orElse(null);
@@ -275,14 +242,10 @@ public class SeedDataConfig implements CommandLineRunner {
                         .houseHoldID("SEED-HH-001")
                         .address("Tổ 1, Phường Seed, TP. Test")
                         .leader(leader)
-                        .members(new ArrayList<>())
                         .build();
-                hh.getMembers().add(leader);
-                if (member1 != null) hh.getMembers().add(member1);
-                if (member2 != null) hh.getMembers().add(member2);
                 hh = householdRepository.save(hh);
 
-                // Update users
+                // Update users to associate with this household
                 leader.setHousehold(hh);
                 leader.setRelationshipWithHead("Chủ hộ");
                 if (houseMemberRole != null) leader.setRole(houseMemberRole);
@@ -302,11 +265,10 @@ public class SeedDataConfig implements CommandLineRunner {
                 }
 
                 // Create ResidentHistory
-                if (residentHistoryRepository.findByHouseHoldId(hh.getId()).isEmpty()) {
-                    residentHistoryRepository.save(ResidentHistory.builder()
-                            .houseHoldId(hh)
-                            .build());
-                }
+                residentHistoryRepository.save(ResidentHistory.builder()
+                        .household(hh)
+                        .build());
+
                 log.debug("Created household: SEED-HH-001");
             }
         }
@@ -321,10 +283,7 @@ public class SeedDataConfig implements CommandLineRunner {
                         .houseHoldID("SEED-HH-002")
                         .address("Tổ 2, Phường Seed, TP. Test")
                         .leader(leader)
-                        .members(new ArrayList<>())
                         .build();
-                hh.getMembers().add(leader);
-                if (member != null) hh.getMembers().add(member);
                 hh = householdRepository.save(hh);
 
                 leader.setHousehold(hh);
@@ -339,16 +298,16 @@ public class SeedDataConfig implements CommandLineRunner {
                     userRepository.save(member);
                 }
 
-                if (residentHistoryRepository.findByHouseHoldId(hh.getId()).isEmpty()) {
-                    residentHistoryRepository.save(ResidentHistory.builder()
-                            .houseHoldId(hh)
-                            .build());
-                }
+                residentHistoryRepository.save(ResidentHistory.builder()
+                        .household(hh)
+                        .build());
+
                 log.debug("Created household: SEED-HH-002");
             }
         }
     }
 
+    @Transactional
     private void initFees() {
         if (feeRepository.findByName("Phí vệ sinh 2024").isEmpty()) {
             feeRepository.save(Fee.builder()
@@ -395,6 +354,7 @@ public class SeedDataConfig implements CommandLineRunner {
         }
     }
 
+    @Transactional
     private void initTransactions() {
         Fee feeMandatory = feeRepository.findByName("Phí vệ sinh 2024").orElse(null);
         Fee feeVoluntary = feeRepository.findByName("Quỹ thiện nguyện 2024").orElse(null);
@@ -402,8 +362,8 @@ public class SeedDataConfig implements CommandLineRunner {
         Household hh2 = householdRepository.findByHouseHoldID("SEED-HH-002").orElse(null);
 
         if (feeMandatory != null && hh1 != null) {
-            int memberCount = hh1.getMembers() != null ? hh1.getMembers().size() : 1;
-            double required = feeMandatory.getUnitPrice() * 12 * memberCount;
+            int memberCount = (int) userRepository.countByHouseholdId(hh1.getId());
+            double required = feeMandatory.getUnitPrice() * 12 * Math.max(1, memberCount);
             Transaction tx = Transaction.builder()
                     .fee(feeMandatory)
                     .household(hh1)
@@ -416,8 +376,8 @@ public class SeedDataConfig implements CommandLineRunner {
         }
 
         if (feeMandatory != null && hh2 != null) {
-            int memberCount = hh2.getMembers() != null ? hh2.getMembers().size() : 1;
-            double required = feeMandatory.getUnitPrice() * 12 * memberCount;
+            int memberCount = (int) userRepository.countByHouseholdId(hh2.getId());
+            double required = feeMandatory.getUnitPrice() * 12 * Math.max(1, memberCount);
             Transaction tx = Transaction.builder()
                     .fee(feeMandatory)
                     .household(hh2)

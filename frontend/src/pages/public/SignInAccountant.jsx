@@ -45,7 +45,7 @@ function SignInAccountant() {
             email: userRole === 'MEMBER' 
               ? 'Tài khoản này là Dân cư. Vui lòng sử dụng trang đăng nhập cho Dân cư.'
               : userRole === 'HAMLET LEADER'
-              ? 'Tài khoản này là Tổ trưởng. Vui lòng sử dụng trang đăng nhập cho Tổ trưởng.'
+              ? 'Tài khoản này là Ban quản lý. Vui lòng sử dụng trang đăng nhập cho Ban quản lý.'
               : `Tài khoản không có quyền đăng nhập vào form này. (Role: ${userRole})`
           });
           return;

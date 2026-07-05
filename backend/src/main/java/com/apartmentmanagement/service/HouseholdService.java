@@ -48,6 +48,15 @@ public class HouseholdService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + name));
     }
 
+    // Helper: get members of a household via UserRepository
+    private List<User> getMembers(String householdId) {
+        return userRepository.findByHouseholdId(householdId);
+    }
+
+    private long getMemberCount(String householdId) {
+        return userRepository.countByHouseholdId(householdId);
+    }
+
     @Transactional(readOnly = true)
     public List<Household> getAllHouseholds() {
         return householdRepository.findAll();
@@ -61,10 +70,10 @@ public class HouseholdService {
 
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getHouseholdResidents(String householdId) {
-        Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
-        if (household.getMembers() == null) return Collections.emptyList();
-        return household.getMembers().stream().map(this::userToMap).collect(Collectors.toList());
+        if (!householdRepository.existsById(householdId)) {
+            throw new ResourceNotFoundException("Household not found");
+        }
+        return getMembers(householdId).stream().map(this::userToMap).collect(Collectors.toList());
     }
 
     @Transactional
@@ -82,7 +91,6 @@ public class HouseholdService {
                 .houseHoldID(houseHoldID)
                 .address(address)
                 .leader(leader)
-                .members(new ArrayList<>(List.of(leader)))
                 .build();
         household = householdRepository.save(household);
 
@@ -120,10 +128,6 @@ public class HouseholdService {
             userRepository.save(oldLeader);
 
             household.setLeader(newLeader);
-            if (household.getMembers() == null) household.setMembers(new ArrayList<>());
-            if (household.getMembers().stream().noneMatch(m -> m.getId().equals(leaderId))) {
-                household.getMembers().add(newLeader);
-            }
             newLeader.setHousehold(household);
             newLeader.setRelationshipWithHead("Chủ hộ");
             userRepository.save(newLeader);
@@ -138,13 +142,12 @@ public class HouseholdService {
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
         Role memberRole = getRole("MEMBER");
 
-        if (household.getMembers() != null) {
-            for (User member : household.getMembers()) {
-                member.setHousehold(null);
-                member.setRelationshipWithHead(null);
-                member.setRole(memberRole);
-                userRepository.save(member);
-            }
+        List<User> members = getMembers(id);
+        for (User member : members) {
+            member.setHousehold(null);
+            member.setRelationshipWithHead(null);
+            member.setRole(memberRole);
+            userRepository.save(member);
         }
         householdRepository.delete(household);
     }
@@ -159,13 +162,9 @@ public class HouseholdService {
         if (user.getHousehold() != null && !user.getHousehold().getId().equals(householdId)) {
             throw new BusinessException("This user is already in another household");
         }
-        if (household.getMembers() != null && household.getMembers().stream().anyMatch(m -> m.getId().equals(userId))) {
+        if (user.getHousehold() != null && user.getHousehold().getId().equals(householdId)) {
             throw new BusinessException("User is already a household member");
         }
-
-        if (household.getMembers() == null) household.setMembers(new ArrayList<>());
-        household.getMembers().add(user);
-        household = householdRepository.save(household);
 
         user.setHousehold(household);
         user.setRelationshipWithHead(relationship != null ? relationship : "Thành viên");
@@ -181,10 +180,10 @@ public class HouseholdService {
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
         boolean isLeader = household.getLeader() != null && household.getLeader().getId().equals(memberId);
-        int memberCount = household.getMembers() != null ? household.getMembers().size() : 0;
+        long memberCount = getMemberCount(householdId);
 
         if (isLeader && memberCount == 1) {
-            // Delete household
+            // Delete household — only member is the leader
             Role memberRole = getRole("MEMBER");
             User leader = household.getLeader();
             leader.setHousehold(null);
@@ -198,9 +197,6 @@ public class HouseholdService {
         if (isLeader) {
             throw new BusinessException("Cannot remove the household leader. Please assign a new leader first.");
         }
-
-        household.getMembers().removeIf(m -> m.getId().equals(memberId));
-        householdRepository.save(household);
 
         User member = userRepository.findById(memberId).orElse(null);
         if (member != null) {
@@ -229,14 +225,15 @@ public class HouseholdService {
             throw new BusinessException("New household ID has existed");
         }
 
-        oldHousehold.getMembers().removeIf(m -> m.getId().equals(userId));
-        householdRepository.save(oldHousehold);
+        // Remove user from old household
+        user.setHousehold(null);
+        userRepository.save(user);
 
+        // Create new household with user as leader
         Household newHousehold = Household.builder()
                 .houseHoldID(newHouseHoldID)
                 .address(newAddress)
                 .leader(user)
-                .members(new ArrayList<>(List.of(user)))
                 .build();
         newHousehold = householdRepository.save(newHousehold);
 
@@ -264,22 +261,16 @@ public class HouseholdService {
         }
 
         if (oldHousehold.getLeader().getId().equals(userId)) {
-            if (oldHousehold.getMembers().size() == 1) {
+            long memberCount = getMemberCount(oldHousehold.getId());
+            if (memberCount == 1) {
+                // Only the leader — delete the household
                 householdRepository.delete(oldHousehold);
             } else {
                 throw new BusinessException("Please assign another resident to be household owner");
             }
-        } else {
-            oldHousehold.getMembers().removeIf(m -> m.getId().equals(userId));
-            householdRepository.save(oldHousehold);
         }
 
-        if (targetHousehold.getMembers() == null) targetHousehold.setMembers(new ArrayList<>());
-        if (targetHousehold.getMembers().stream().noneMatch(m -> m.getId().equals(userId))) {
-            targetHousehold.getMembers().add(user);
-        }
-        householdRepository.save(targetHousehold);
-
+        // Move user to target household
         user.setHousehold(targetHousehold);
         user.setRelationshipWithHead(relationship);
         user.setRole(getRole("HOUSE MEMBER"));
@@ -295,19 +286,20 @@ public class HouseholdService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getMemberById(String householdId, String userId) {
-        Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
-        User member = household.getMembers().stream()
-                .filter(m -> m.getId().equals(userId)).findFirst()
+        if (!householdRepository.existsById(householdId)) {
+            throw new ResourceNotFoundException("Household not found");
+        }
+        User member = userRepository.findByIdAndHouseholdId(userId, householdId)
                 .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this household"));
         return userToMap(member);
     }
 
     @Transactional(readOnly = true)
     public Map<String, Object> getHouseholdChanges(String householdId) {
-        Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
-        ResidentHistory history = residentHistoryRepository.findByHouseHoldId(householdId).orElse(null);
+        if (!householdRepository.existsById(householdId)) {
+            throw new ResourceNotFoundException("Household not found");
+        }
+        ResidentHistory history = residentHistoryRepository.findByHouseholdId(householdId).orElse(null);
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("temporaryHistory", history);
         response.put("majorChanges", Collections.emptyList());
@@ -316,23 +308,21 @@ public class HouseholdService {
 
     @Transactional(readOnly = true)
     public ResidentHistory getResidentHistory(String householdId) {
-        return residentHistoryRepository.findByHouseHoldId(householdId)
+        return residentHistoryRepository.findByHouseholdId(householdId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resident history not found"));
     }
 
     @Transactional
     public ResidentHistory updateResidentHistory(String householdId, Map<String, Object> body) {
-        ResidentHistory history = residentHistoryRepository.findByHouseHoldId(householdId)
+        ResidentHistory history = residentHistoryRepository.findByHouseholdId(householdId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resident history not found"));
-        // Basic update - full implementation would parse the body
         return residentHistoryRepository.save(history);
     }
 
     @Transactional
     public ResidentHistory completeResidentHistory(String householdId, Map<String, Object> body) {
-        ResidentHistory history = residentHistoryRepository.findByHouseHoldId(householdId)
+        ResidentHistory history = residentHistoryRepository.findByHouseholdId(householdId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resident history not found"));
-        // Mark as completed
         return residentHistoryRepository.save(history);
     }
 }

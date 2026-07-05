@@ -11,6 +11,7 @@ import com.apartmentmanagement.exception.ResourceNotFoundException;
 import com.apartmentmanagement.repository.FeeRepository;
 import com.apartmentmanagement.repository.HouseholdRepository;
 import com.apartmentmanagement.repository.TransactionRepository;
+import com.apartmentmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class FeeService {
     private final FeeRepository feeRepository;
     private final HouseholdRepository householdRepository;
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Fee createFee(String name, String type, String description, Double unitPrice) {
@@ -60,14 +62,14 @@ public class FeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Fee not found"));
 
         List<Household> households = householdRepository.findAll();
-        List<Transaction> transactions = transactionRepository.findByFee(feeId);
+        List<Transaction> transactions = transactionRepository.findByFeeId(feeId);
 
         double totalExpected = 0;
         double totalCollected = 0;
         List<Map<String, Object>> details = new ArrayList<>();
 
         for (Household h : households) {
-            int memberCount = h.getMembers() != null ? h.getMembers().size() : 0;
+            int memberCount = (int) userRepository.countByHouseholdId(h.getId());
             double paidAmount = transactions.stream()
                     .filter(t -> t.getHousehold() != null && t.getHousehold().getId().equals(h.getId()))
                     .mapToDouble(Transaction::getAmount).sum();
@@ -132,7 +134,7 @@ public class FeeService {
         if (!feeRepository.existsById(feeId)) {
             throw new ResourceNotFoundException("Fee not found");
         }
-        if (transactionRepository.countByFee(feeId) > 0) {
+        if (transactionRepository.countByFeeId(feeId) > 0) {
             throw new BusinessException("Cannot delete fee with existing transactions");
         }
         feeRepository.deleteById(feeId);
@@ -167,8 +169,8 @@ public class FeeService {
 
     private List<Map<String, Object>> calculateHouseholdFees(Household household) {
         List<Fee> activeFees = feeRepository.findByStatus(FeeStatus.ACTIVE);
-        int memberCount = household.getMembers() != null ? household.getMembers().size() : 0;
-        List<Transaction> myTransactions = transactionRepository.findByHousehold(household.getId());
+        int memberCount = (int) userRepository.countByHouseholdId(household.getId());
+        List<Transaction> myTransactions = transactionRepository.findByHouseholdId(household.getId());
 
         return activeFees.stream().map(fee -> {
             double paidAmount = myTransactions.stream()

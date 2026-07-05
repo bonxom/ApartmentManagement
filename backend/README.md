@@ -8,9 +8,9 @@ Backend Spring Boot cho hệ thống Quản lý Chung cư, phục vụ demo 2 us
 
 - Java 17+
 - Spring Boot 3.2.5
-- Spring Data MongoDB
+- Spring Data JPA
 - Spring Security + JWT
-- MongoDB
+- PostgreSQL
 - Maven
 - Lombok
 
@@ -18,7 +18,7 @@ Backend Spring Boot cho hệ thống Quản lý Chung cư, phục vụ demo 2 us
 
 - Java 17 hoặc 21
 - Maven 3.8+ (hoặc dùng `./mvnw`)
-- MongoDB (local hoặc Atlas)
+- PostgreSQL (local hoặc cloud)
 
 ## Cấu hình
 
@@ -26,9 +26,10 @@ File cấu hình: `src/main/resources/application.properties`
 
 Các biến chính:
 ```properties
-server.port=3000                              # Port backend (giữ nguyên 3000 như backend cũ)
-spring.data.mongodb.uri=<your-mongodb-uri>    # Connection string MongoDB
-spring.data.mongodb.database=apartment-management
+server.port=3000                              # Port backend 
+spring.datasource.url=jdbc:postgresql://localhost:5432/resident_management
+spring.datasource.username=postgres
+spring.datasource.password=postgres
 app.jwt.secret=<your-jwt-secret>              # Secret key cho JWT
 app.jwt.expiration-ms=604800000               # Token hết hạn: 7 ngày
 app.cors.allowed-origins=http://localhost:5173 # Frontend origin
@@ -92,7 +93,7 @@ backend-springboot/src/main/java/com/apartmentmanagement/
 ├── ApartmentManagementApplication.java
 ├── config/
 │   ├── CorsConfig.java          # CORS configuration
-│   ├── MongoConfig.java         # MongoDB auditing
+│   ├── JpaConfig.java           # JPA auditing
 │   └── SeedDataConfig.java      # Seed data cho demo
 ├── security/
 │   ├── JwtAuthFilter.java       # JWT authentication filter
@@ -126,7 +127,7 @@ backend-springboot/src/main/java/com/apartmentmanagement/
 │   ├── TransactionRepository.java
 │   ├── RequestRepository.java
 │   └── ResidentHistoryRepository.java
-├── document/                    # MongoDB documents
+├── entity/                      # JPA entities
 │   ├── User.java
 │   ├── Role.java
 │   ├── Permission.java

@@ -56,11 +56,11 @@ public class TransactionService {
     public List<Transaction> getTransactions(String feeId, String householdId) {
         List<Transaction> transactions;
         if (feeId != null && householdId != null) {
-            transactions = transactionRepository.findByFeeAndHousehold(feeId, householdId);
+            transactions = transactionRepository.findByFeeIdAndHouseholdId(feeId, householdId);
         } else if (feeId != null) {
-            transactions = transactionRepository.findByFee(feeId);
+            transactions = transactionRepository.findByFeeId(feeId);
         } else if (householdId != null) {
-            transactions = transactionRepository.findByHousehold(householdId);
+            transactions = transactionRepository.findByHouseholdId(householdId);
         } else {
             transactions = StreamSupport.stream(transactionRepository.findAll().spliterator(), false)
                     .collect(Collectors.toList());

@@ -28,7 +28,7 @@ import DanhSachPhanAnh from "../pages/Admin/PheDuyet/DanhSachPhanAnh";
 import DanhSachDangKyXe from "../pages/Admin/PheDuyet/DanhSachDangKyXe";
 import MaintenanceManagement from "../pages/Admin/BaoTri/MaintenanceManagement";
 
-// Routes cho Tổ trưởng (HAMLET LEADER)
+// Routes cho Ban quan ly (HAMLET LEADER)
 export const leaderRoutes = (
 
   <Route path="leader" element={<MainLayout />}>

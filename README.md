@@ -38,9 +38,9 @@ Hệ thống quản lý chung cư/dân cư theo mô hình fullstack, tập trung
 
 ### Backend (`backend`)
 - Java 17 + Spring Boot 3.2.5
-- Spring Data MongoDB
+- Spring Data JPA
 - Spring Security + JWT (stateless auth)
-- MongoDB (Atlas)
+- PostgreSQL
 - Maven
 - Lombok
 
@@ -50,14 +50,14 @@ Hệ thống quản lý chung cư/dân cư theo mô hình fullstack, tập trung
 ApartmentManagement/
 ├── backend/
 │   ├── src/main/java/com/apartmentmanagement/
-│   │   ├── config/          # CORS, MongoDB, Seed Data
+│   │   ├── config/          # CORS, JPA, Seed Data
 │   │   ├── controller/      # REST controllers
 │   │   ├── dto/request/     # Request DTOs
 │   │   ├── dto/response/    # Response DTOs (ApiResponse<T>)
-│   │   ├── entity/          # MongoDB documents
+│   │   ├── entity/          # JPA entities
 │   │   ├── enums/           # Enum types
 │   │   ├── exception/       # GlobalExceptionHandler + custom exceptions
-│   │   ├── repository/      # Spring Data MongoDB repositories
+│   │   ├── repository/      # Spring Data JPA repositories
 │   │   ├── security/        # JWT filter, token provider, SecurityConfig
 │   │   └── service/         # Business logic
 │   └── pom.xml
@@ -81,7 +81,7 @@ ApartmentManagement/
 - Maven 3.8+ (hoặc dùng `./mvnw`)
 - Node.js 18+
 - npm 9+
-- MongoDB (local hoặc Atlas)
+- PostgreSQL (local hoặc cloud)
 
 ## Thiết lập môi trường
 
@@ -92,8 +92,9 @@ Cấu hình trong `backend/src/main/resources/application.properties`:
 | Biến | Mô tả |
 |---|---|
 | `server.port` | Port backend (mặc định: 3000) |
-| `spring.data.mongodb.uri` | Connection string MongoDB |
-| `spring.data.mongodb.database` | Tên database |
+| `spring.datasource.url` | JDBC URL PostgreSQL |
+| `spring.datasource.username` | Database username |
+| `spring.datasource.password` | Database password |
 | `app.jwt.secret` | Secret key cho JWT |
 | `app.jwt.expiration-ms` | Token hết hạn (mặc định: 7 ngày) |
 | `app.cors.allowed-origins` | Frontend origin (mặc định: `http://localhost:5173`) |
@@ -188,7 +189,7 @@ Các endpoint này trả về HTTP 200 với body `{success: false, message: "T�
 
 - Frontend: Vercel/Netlify
 - Backend: VPS/Render/Railway
-- Database: MongoDB Atlas
+- Database: PostgreSQL
 
 ## License
 

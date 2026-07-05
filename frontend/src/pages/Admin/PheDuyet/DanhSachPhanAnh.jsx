@@ -272,7 +272,7 @@ export default function DanhSachPhanAnh() {
 
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 700, mb: 1 }}>
-                  Ý kiến phản hồi / Chỉ đạo xử lý của Tổ trưởng
+                  Ý kiến phản hồi / Chỉ đạo xử lý của Ban quản lý
                 </Typography>
                 <TextField
                   fullWidth

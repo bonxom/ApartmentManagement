@@ -71,7 +71,7 @@ export default function RequestFeedback() {
             Gửi phản ánh dịch vụ
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            Mọi ý kiến của bạn sẽ được chuyển thẳng tới Tổ trưởng để phê duyệt và giải quyết.
+            Mọi ý kiến của bạn sẽ được chuyển thẳng tới Ban quản lý để phê duyệt và giải quyết.
           </Typography>
         </Box>
       </Box>

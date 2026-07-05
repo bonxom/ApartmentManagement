@@ -316,7 +316,7 @@ function UserDashboard() {
         
         <Alert severity="info" sx={{ mb: 4 }}>
           <strong>Bạn chưa thuộc hộ gia đình nào</strong><br />
-          Vui lòng liên hệ với Tổ trưởng để được thêm vào hộ gia đình. 
+          Vui lòng liên hệ với Ban quản lý để được thêm vào hộ gia đình. 
           Sau khi được thêm vào hộ, bạn sẽ có thể xem đầy đủ thông tin và thống kê về hộ gia đình của mình.
         </Alert>
         

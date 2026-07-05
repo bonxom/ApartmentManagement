@@ -53,6 +53,7 @@ com/apartmentmanagement/entity/ResidentHistory$TemporaryResident$TemporaryReside
 com/apartmentmanagement/controller/RoleController.class
 com/apartmentmanagement/entity/Role$RoleBuilder.class
 com/apartmentmanagement/entity/Transaction$TransactionBuilder.class
+com/apartmentmanagement/config/JpaConfig.class
 com/apartmentmanagement/dto/response/UserResponse.class
 com/apartmentmanagement/enums/FeeType.class
 com/apartmentmanagement/dto/request/CreateUserRequest.class
@@ -70,7 +71,6 @@ com/apartmentmanagement/repository/PermissionRepository.class
 com/apartmentmanagement/enums/FeeStatus.class
 com/apartmentmanagement/dto/request/ChangePasswordRequest.class
 com/apartmentmanagement/dto/request/RegisterRequest.class
-com/apartmentmanagement/config/MongoConfig.class
 com/apartmentmanagement/controller/TransactionController.class
 com/apartmentmanagement/entity/Request.class
 com/apartmentmanagement/enums/RequestType.class
